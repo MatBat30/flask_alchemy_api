@@ -7,13 +7,14 @@ from models.role import Role
 
 user_bp = Blueprint('user_bp', __name__)
 
+# routes/user_routes.py
 @user_bp.route('/', methods=['GET'])
 @swag_from({
     'tags': ['User CRUD'],
-    'description': 'Récupère la liste de tous les utilisateurs.',
+    'description': 'Récupère la liste de tous les utilisateurs avec leurs sites associés.',
     'responses': {
         200: {
-            'description': 'Liste des utilisateurs.',
+            'description': 'Liste des utilisateurs avec leurs sites.',
             'schema': {
                 'type': 'array',
                 'items': {
@@ -21,7 +22,25 @@ user_bp = Blueprint('user_bp', __name__)
                     'properties': {
                         'id': {'type': 'integer', 'example': 1},
                         'login': {'type': 'string', 'example': 'user1'},
-                        'roles': {'type': 'array', 'items': {'type': 'string'}}
+                        'roles': {
+                            'type': 'array',
+                            'items': {'type': 'string'},
+                            'example': ['user']
+                        },
+                        'sites': {
+                            'type': 'array',
+                            'items': {
+                                'type': 'object',
+                                'properties': {
+                                    'id': {'type': 'integer', 'example': 3},
+                                    'name': {'type': 'string', 'example': 'Site test 1'}
+                                }
+                            },
+                            'example': [
+                                {'id': 3, 'name': 'Site test 1'},
+                                {'id': 4, 'name': 'Site test 2'}
+                            ]
+                        }
                     }
                 }
             }
@@ -35,7 +54,14 @@ def get_users():
         result = []
         for user in users:
             roles = [role.name for role in user.roles]
-            result.append({'id': user.id, 'login': user.login, 'roles': roles})
+            # Pour chaque site, on retourne uniquement l'id et le nom
+            sites = [{'id': site.id, 'name': site.name} for site in user.sites]
+            result.append({
+                'id': user.id,
+                'login': user.login,
+                'roles': roles,
+                'sites': sites
+            })
         return jsonify(result), 200
     except Exception as e:
         current_app.logger.error(f"Error in get_users: {e}")
