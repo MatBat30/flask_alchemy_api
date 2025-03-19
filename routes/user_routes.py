@@ -167,8 +167,8 @@ def create_user():
         result = {'id': user.id, 'login': user.login, 'roles': [role.name for role in user.roles]}
         return jsonify(result), 201
     except Exception as e:
+        current_app.logger.exception("Error in create_user:")
         db.session.rollback()
-        current_app.logger.error(f"Error in create_user: {e}")
         return jsonify({'error': str(e)}), 500
 
 @user_bp.route('/<int:user_id>', methods=['PUT'])

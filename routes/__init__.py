@@ -9,6 +9,10 @@ from .carte_routes import carte_bp
 from .user_role_routes import user_role_bp
 from .user_routes import user_bp
 from .user_site_routes import user_site_bp
+from .baes_routes import baes_bp
+from .historique_erreur_routes import historique_erreur_bp
+
+
 
 def init_app(app):
     app.register_blueprint(carte_bp, url_prefix='/cartes')
@@ -20,3 +24,5 @@ def init_app(app):
     app.register_blueprint(etage_carte_bp, url_prefix='/etages/carte')  # Préfixe modifié pour éviter conflit
     app.register_blueprint(site_carte_bp, url_prefix='/sites/carte')  # Pour la relation one-to-one site-carte
     app.register_blueprint(user_role_bp, url_prefix='/role/users') # Préfixe modifié pour éviter conflit
+    app.register_blueprint(baes_bp, url_prefix='/baes')
+    app.register_blueprint(historique_erreur_bp, url_prefix='/erreurs')

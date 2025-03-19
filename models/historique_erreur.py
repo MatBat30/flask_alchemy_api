@@ -1,29 +1,26 @@
 from sqlalchemy import DateTime, text
 
+from templates.TimestampMixin import TimestampMixin
 from . import db
 from datetime import *  # Importation de datetime
 
 error_types = ('erreur_connexion', 'erreur_batterie')
 
-class HistoriqueErreur(db.Model):
+
+def current_time():
+    return datetime.now(timezone.utc)
+
+class HistoriqueErreur(TimestampMixin,db.Model):
     __tablename__ = 'historique_erreur'
 
     id = db.Column(db.Integer, primary_key=True)
     baes_id = db.Column(db.Integer, db.ForeignKey('baes.id'), nullable=False)
     type_erreur = db.Column(db.Enum(*error_types, name='type_erreur'), nullable=False)
+
     timestamp = db.Column(
-        DateTime,
-        server_default=text("SWITCHOFFSET(SYSDATETIMEOFFSET(), '+01:00')"),
+        DateTime(timezone=True),
+        default=current_time,
         nullable=False
-    )
-    created_at = db.Column(
-        db.DateTime,
-        server_default=text("SWITCHOFFSET(SYSDATETIMEOFFSET(), '+01:00')")
-    )
-    updated_at = db.Column(
-        db.DateTime,
-        server_default=text("SWITCHOFFSET(SYSDATETIMEOFFSET(), '+01:00')"),
-        server_onupdate=text("SWITCHOFFSET(SYSDATETIMEOFFSET(), '+01:00')")
     )
 
     def __repr__(self):

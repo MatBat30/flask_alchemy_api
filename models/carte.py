@@ -1,8 +1,9 @@
 from sqlalchemy import text
 
+from templates.TimestampMixin import TimestampMixin
 from . import db
 
-class Carte(db.Model):
+class Carte(TimestampMixin,db.Model):
     __tablename__ = 'cartes'
     id = db.Column(db.Integer, primary_key=True)
     chemin = db.Column(db.String(255), nullable=False)
@@ -15,16 +16,6 @@ class Carte(db.Model):
             '((etage_id IS NOT NULL AND site_id IS NULL) OR (etage_id IS NULL AND site_id IS NOT NULL))',
             name='ck_carte_one_relation'
         ),
-    )
-
-    created_at = db.Column(
-        db.DateTime,
-        server_default=text("SWITCHOFFSET(SYSDATETIMEOFFSET(), '+01:00')")
-    )
-    updated_at = db.Column(
-        db.DateTime,
-        server_default=text("SWITCHOFFSET(SYSDATETIMEOFFSET(), '+01:00')"),
-        server_onupdate=text("SWITCHOFFSET(SYSDATETIMEOFFSET(), '+01:00')")
     )
 
     def __repr__(self):
